@@ -8,8 +8,8 @@ class PeopleMover:
     def __init__(self, stop_delay_sec, start_delay_sec, moving=False):
         self._moving = moving
         self.should_move = moving
-        self.stop_delay_sec = stop_delay_sec
-        self.start_delay_sec = start_delay_sec
+        self._stop_delay_sec = stop_delay_sec
+        self._start_delay_sec = start_delay_sec
         if self._moving:
             self._go()
         else:
@@ -19,10 +19,10 @@ class PeopleMover:
         while 1:
             if self._moving != self.should_move:
                 if self._moving:
-                    self._slow_for(self.stop_delay_sec)
+                    self._slow_for(self._stop_delay_sec)
                     self._stop()
                 else:
-                    sleep_ms(self.start_delay_sec*1000)
+                    sleep_ms(self._start_delay_sec*1000)
                     self._go()
             sleep_ms(500)
             
@@ -33,7 +33,7 @@ class PeopleMover:
         self._moving = True
         
     def _slow_for(self):
-        self.moving = True
+        self._moving = True
     
     
 
