@@ -7,18 +7,6 @@ class Button:
         self.callback = callback
         self.trigger_on_press = trigger_on_press
         self.button.irq(trigger=Pin.IRQ_RISING, handler=self.debounce_and_trigger)
-        
-    def debounce_and_trigger_on_press(self, pin):
-        """
-        Responds to a button press event by ensuring the button remains depressed for 20 ms before triggering callback.
-        """
-        active = 0
-        while self.button.value() and active < 20:
-            active += 1
-            sleep_ms(1)
-        if active == 20:
-            if self.callback:
-                self.callback(pin)
                 
     def debounce_and_trigger(self, pin):
         """

@@ -1,8 +1,9 @@
-from utime import sleep_ms
 from modules.button import Button
 from modules.led import LED
 from modules.buzzer import Buzzer
 from _thread import start_new_thread
+from utime import sleep_ms
+from machine import Timer
     
 class PeopleMover:
     def __init__(self, stop_delay_sec, start_delay_sec, moving=False):
@@ -19,21 +20,23 @@ class PeopleMover:
         while 1:
             if self._moving != self.should_move:
                 if self._moving:
-                    self._slow_for(self._stop_delay_sec)
-                    self._stop()
+                    self._moving = self.should_move
+                    self._slow_and_stop()
                 else:
-                    sleep_ms(self._start_delay_sec*1000)
-                    self._go()
+                    self._moving = self.should_move
+                    Timer(-1).init(period=self._start_delay_sec*1000, mode=Timer.ONE_SHOT, callback=self._go)
+                
             sleep_ms(500)
             
-    def _stop(self):
+    def _stop(self, _=None):
         self._moving = False
         
-    def _go(self):
+    def _go(self, _=None):
         self._moving = True
         
-    def _slow_for(self):
+    def _slow_and_stop(self):
         self._moving = True
+        Timer(-1).init(period=self._stop_delay_sec*1000, mode=Timer.ONE_SHOT, callback=self._stop)
     
     
 
@@ -59,18 +62,17 @@ class TrafficLight(PeopleMover):
         self._yellow.off()
         self._green.on()
     
-    def _go(self):
+    def _go(self, _=None):
         self._green_light()
         super()._go()
         
-    def _stop(self, delay_sec=2):
+    def _stop(self, _=None):
         self._red_light()
         super()._stop()
         
-    def _slow_for(self, duration_sec):
+    def _slow_and_stop(self):
         self._yellow_light()
-        sleep_ms(duration_sec*1000)
-        super()._slow_for()
+        super()._slow_and_stop()
             
 class CrosswalkLight(PeopleMover):
     def __init__(self, green_led_pin, yellow_led_pin, buzzer_pin, stop_delay_sec, start_delay_sec, moving):
@@ -87,19 +89,18 @@ class CrosswalkLight(PeopleMover):
         self._green.off()
         self._yellow.on()
         
-    def _slow_for(self, duration_sec):
+    def _slow_and_stop(self):
         self._yellow_light()
-        self._buzzer.start(tone_code=6)
-        self._yellow.blink(duration_sec)
-        self._buzzer.stop()
-        super()._slow_for()
+        self._buzzer.start(tone_code=6, duration_sec=self._stop_delay_sec)
+        self._yellow.blink(self._stop_delay_sec)
+        super()._slow_and_stop()
         
-    def _go(self):
+    def _go(self, _=None):
         self._green_light()
-        self._buzzer.play(tone_code=7, duration_ms=1000)
+        self._buzzer.start(tone_code=7, duration_sec=1)
         super()._go()
     
-    def _stop(self):
+    def _stop(self, _=None):
         self._yellow_light()
         super()._stop()
         
@@ -108,9 +109,9 @@ class Intersection:
     def __init__(self, red_led_pin, yellow_led_pin, green_led_pin, road_sensor_pin, crosswalk_sensor_pin, buzzer_pin, green_led_2_pin, yellow_led_2_pin):
         crosswalk_yellow_duration_sec = 2
         traffic_yellow_duration_sec = 5
-        self._traffic_light = TrafficLight(red_led_pin, yellow_led_pin, green_led_pin, crosswalk_yellow_duration_sec, traffic_yellow_duration_sec, moving=False)
+        self._traffic_light = TrafficLight(red_led_pin, yellow_led_pin, green_led_pin, traffic_yellow_duration_sec, crosswalk_yellow_duration_sec, moving=False)
         self._cars_waiting = 0
-        self._crosswalk_light = CrosswalkLight(green_led_2_pin, yellow_led_2_pin, buzzer_pin, traffic_yellow_duration_sec, crosswalk_yellow_duration_sec, moving=True)
+        self._crosswalk_light = CrosswalkLight(green_led_2_pin, yellow_led_2_pin, buzzer_pin, crosswalk_yellow_duration_sec, traffic_yellow_duration_sec, moving=True)
         self._pedestrians_waiting = 0
         self._road_sensor = Button(road_sensor_pin, callback=self._car_arrives)
         self._crosswalk_sensor = Button(crosswalk_sensor_pin, callback=self._pedestrian_arrives, pull_down=False)
