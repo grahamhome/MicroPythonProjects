@@ -4,6 +4,10 @@ from modules.buzzer import Buzzer
 from _thread import start_new_thread
 from utime import sleep_ms
 from machine import Timer
+import uasyncio as asyncio
+
+# TODO: new async version where 1 coro listens to each button and reports press durations to the traffic light and xwalk
+# light coros, which consume them by remaining active for the same duration.
     
 class PeopleMover:
     def __init__(self, stop_delay_sec, start_delay_sec, moving=False):
@@ -16,7 +20,7 @@ class PeopleMover:
         else:
             self._stop()
         
-    def run(self):
+    async def run(self):
         while 1:
             if self._moving != self.should_move:
                 if self._moving:
@@ -26,7 +30,7 @@ class PeopleMover:
                     self._moving = self.should_move
                     Timer(-1).init(period=self._start_delay_sec*1000, mode=Timer.ONE_SHOT, callback=self._go)
                 
-            sleep_ms(500)
+            await asyncio.sleep_ms(500)
             
     def _stop(self, _=None):
         self._moving = False
