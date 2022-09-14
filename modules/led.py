@@ -1,59 +1,44 @@
 from machine import Pin, Timer
-from utime import sleep_ms
-from math import floor
-
-DEFAULT_BLINK_DURATION_SEC = 1
-DEFAULT_BLINKS_PER_SEC = 8
+from modules.square_wave import SquareWave
 
 class LED:
     
-    # TODO add properties for brightness
-    
-    def __init__(self, pin_number, on=False):
-        self._led = Pin(pin_number, Pin.OUT)
+    def __init__(self, pin_number, brightness=1, flash_per_sec=0, on=False):
+        self._pwm = SquareWave(pin_number=pin_number)
+        self._brightness = brightness
         self._timer = Timer(-1)
-        self._blinks = 0
-        self._blinking = False
-        self._blinks_duration_sec = DEFAULT_BLINK_DURATION_SEC
-        self._blinks_per_sec = DEFAULT_BLINKS_PER_SEC
         if on:
             self.on()
         else:
             self.off()
+        if flash_per_sec > 0:
+            self._flash_per_sec = flash_per_sec
+            self._init_timer()
+
+    def _init_timer(self):
+        self._timer.init(period=round(1000/self._flash_per_sec), mode=Timer.PERIODIC, callback=self.toggle)
+
+    def toggle(self, timer=None):
+        self._pwm.toggle()
     
-    def on(self):
-        self._stop_blink()
-        self._led.value(True)
-        self.is_on = True
+    def on(self, brightness=None, flash_per_sec=0, duration_sec=0):
+        if brightness is None:
+            brightness = self._brightness
+        if flash_per_sec > 0:
+            self._flash_per_sec = flash_per_sec
+            self._init_timer()
+        if self._pwm.is_running:
+            self._pwm.stop()
+        self._pwm.start(frequency=100, duty=brightness, duration_sec=duration_sec)
         
     def off(self):
-        self._stop_blink()
-        self._led.value(False)
-        self.is_on = False
-    
-    def toggle(self):
-        self._led.value(not self._led.value())
-        self.is_on = not self.is_on
+        self._pwm.stop()
         
-    def blink(self, duration_sec=DEFAULT_BLINK_DURATION_SEC, blinks_per_sec=DEFAULT_BLINKS_PER_SEC):
-        if not self._blinking:
-            self._blinking = True
-            self._blink_duration_sec = duration_sec
-            self._blinks_per_sec = blinks_per_sec
-            self._timer.init(period=floor(1000/self._blinks_per_sec), mode=Timer.PERIODIC, callback=self._blink)
-            
-    def _stop_blink(self):
-        self._timer.deinit()
-        self._blink_duration_sec = DEFAULT_BLINK_DURATION_SEC
-        self._blinks_per_sec = DEFAULT_BLINKS_PER_SEC
-        self._blinks = 0
-        self._blinking = False
-        self._led.value(False)
-        self.is_on = False
-            
-    def _blink(self, timer):
-        if self._blinks < self._blinks_per_sec*self._blink_duration_sec*2:
-            self._blinks += 1
-            self.toggle()
-        else:
-            self._stop_blink()
+    def is_on(self):
+        return self._pwm.is_running
+    
+    def update_brightness(self, brightness):
+        self._pwm.set_duty(brightness)
+    
+    def update_duration(self, duration_sec):
+        self._pwm.set_timer(duration_sec)

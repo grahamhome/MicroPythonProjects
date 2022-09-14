@@ -2,6 +2,8 @@ from machine import Pin
 from utime import sleep_us, ticks_us, ticks_diff
 _SPEED_OF_SOUND = 340 # m/s at sea level
 TX_DURATION = 10 # microseconds
+
+# TODO: Sensor should put out a steady reading when stationary and an accurate curve when moving (only report changes to a certain level of precision?)
 class UltrasonicSensor:
     _conversion_rate = _SPEED_OF_SOUND / 10_000 / 2 # Conversion factor from microsecond pulses to distance in centimeters
     def __init__(self, tx_pin_number, rx_pin_number):
