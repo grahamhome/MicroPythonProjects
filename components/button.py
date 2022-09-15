@@ -31,4 +31,4 @@ class Button:
                 while self.button.value() == self.on_value:
                     sleep_ms(1)
             if self.callback:
-                self.callback(pin)
+                self.callback()
