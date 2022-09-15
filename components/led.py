@@ -1,5 +1,5 @@
 from machine import Timer
-from modules.square_wave import SquareWave
+from components.square_wave import SquareWave
 
 
 class LED:

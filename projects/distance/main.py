@@ -1,8 +1,8 @@
-from modules.button import Button
-from modules.ultrasonic_sensor import UltrasonicSensor
-from modules.led import LED
+from components.button import Button
+from components.ultrasonic_sensor import UltrasonicSensor
+from components.led import LED
 from utime import sleep_ms
-from modules.rolling_average import RollingAverage
+from components.rolling_average import RollingAverage
 
 max_distance = 20
 min_distance = 4

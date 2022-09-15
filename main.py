@@ -1,11 +1,11 @@
-import tests.modules.test_led as test_led
+import tests as test_modules
 
-tests = list(filter(lambda funcname: funcname.startswith("test_"), dir(test_led)))
+test_methods = list(filter(lambda funcname: funcname.startswith("test_"), dir(test_modules)))
 
 failures = {}
 
-for test in tests:
-    test_function = getattr(test_led, test)
+for test in test_methods:
+    test_function = getattr(test_modules, test)
     try:
         test_function()
     except Exception as e:
