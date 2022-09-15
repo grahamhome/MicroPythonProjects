@@ -11,7 +11,11 @@ for test in test_methods:
     except Exception as e:
         failures[test] = e
 
-print(f"Failures ({len(list(failures.keys()))}):")
-for failed_test, exception in failures.items():
-    print(f"Test: {failed_test}")
-    print(f"Exception: {exception}")
+num_failures = len(list(failures.keys()))
+if num_failures > 0:
+    print(f"Failures ({num_failures}):")
+    for failed_test, exception in failures.items():
+        print(f"Test: {failed_test}")
+        print(f"Exception: {exception}")
+else:
+    print("All passed!")
