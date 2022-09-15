@@ -1,14 +1,21 @@
 from machine import Pin
 from utime import sleep_ms
 
+
 class Button:
-    def __init__(self, pin_number, callback=None, pull_down=True, trigger_on_press=True):
-        self.button = Pin(pin_number, Pin.IN, Pin.PULL_DOWN if pull_down else Pin.PULL_UP)
+    def __init__(
+        self, pin_number, callback=None, pull_down=True, trigger_on_press=True
+    ):
+        self.button = Pin(
+            pin_number, Pin.IN, Pin.PULL_DOWN if pull_down else Pin.PULL_UP
+        )
         self.on_value = int(pull_down)
         self.callback = callback
         self.trigger_on_press = trigger_on_press
-        self.button.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self.debounce_and_trigger)
-                
+        self.button.irq(
+            trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self.debounce_and_trigger
+        )
+
     def debounce_and_trigger(self, pin):
         """
         Responds to a button press event by ensuring the button remains depressed for 20 ms before triggering callback.

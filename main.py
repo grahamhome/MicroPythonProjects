@@ -1,22 +1,17 @@
-from modules.button import Button
-from modules.ultrasonic_sensor import UltrasonicSensor
-from modules.led import LED
-from utime import sleep_ms
+import tests.modules.test_led as test_led
 
-max_distance = 20
-min_distance = 4
-max_freq = 2000
-min_freq = 100
+tests = list(filter(lambda funcname: funcname.startswith("test_"), dir(test_led)))
 
-def main():
-    # sensor = UltrasonicSensor(1, 0)
-    distance = 0
-    trigger = Button(pin_number=16, callback=lambda _: print(distance), pull_down=False)
-    led = LED(pin_number=15)
-    brightness = 1
-    led.on(brightness=brightness, duration_sec=1)
-    while brightness > 0:
-        sleep_ms(1000)
-        brightness -= 0.1
-        led.update_brightness(brightness)
-        
+failures = {}
+
+for test in tests:
+    test_function = getattr(test_led, test)
+    try:
+        test_function()
+    except Exception as e:
+        failures[test] = e
+
+print(f"Failures ({len(list(failures.keys()))}):")
+for failed_test, exception in failures.items():
+    print(f"Test: {failed_test}")
+    print(f"Exception: {exception}")
