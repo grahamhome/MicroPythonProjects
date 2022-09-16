@@ -1,5 +1,6 @@
 import tests.test_cases as test_cases
 
+
 def run_tests():
     test_methods = reversed(list(filter(lambda funcname: funcname.startswith("test_"), dir(test_cases))))
 
@@ -22,5 +23,6 @@ def run_tests():
             print(f"Exception: {exception}")
     else:
         print("All passed!")
+
 
 run_tests()

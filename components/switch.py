@@ -9,10 +9,15 @@ class Switch:
     _instances = []
     _all_instance_poller = Timer(-1)
 
-    def __init__(self, pin_number, close_callback=None, open_callback=None, start_active=False, pull_down=True):
-        self._pin = Pin(
-            pin_number, mode=Pin.IN, pull=Pin.PULL_DOWN if pull_down else Pin.PULL_UP
-        )
+    def __init__(
+        self,
+        pin_number,
+        close_callback=None,
+        open_callback=None,
+        start_active=False,
+        pull_down=True,
+    ):
+        self._pin = Pin(pin_number, mode=Pin.IN, pull=Pin.PULL_DOWN if pull_down else Pin.PULL_UP)
         self._pull_down = pull_down
         self._debounced_state = pull_down if start_active else not pull_down
         self._counter = 0

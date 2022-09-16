@@ -29,29 +29,38 @@ def test_create_on_turn_off():
     print("Now mash that sucker")
     assert input("Light OK? ") in YES_RESPONSES
 
+
 def test_create_on_blinking():
     ...
+
 
 def test_create_on_brightness():
     ...
 
+
 def test_toggle_on_off():
     ...
+
 
 def test_toggle_on_off_blinking():
     ...
 
+
 def test_toggle_on_off_timed():
     ...
+
 
 def test_toggle_on_off_timed_blinking():
     ...
 
+
 def test_increase_decrease_blink_rate():
     ...
 
+
 def test_increase_decrease_timeout():
     ...
+
 
 def test_increase_decrease_brightness():
     ...

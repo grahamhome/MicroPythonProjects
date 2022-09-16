@@ -8,17 +8,18 @@ import ustruct
 from radio.msg import RadioConfig, msg
 
 # Choose a channel (or accept default 99)
-#RadioConfig.channel = 99
-testbox_config = RadioConfig(spi_no = 0, csn_pin = 5, ce_pin = 12) # My testbox
-v1_config = RadioConfig(spi_no = 0, csn_pin = 5, ce_pin = 3)   # Pico explorer
-v2_config = RadioConfig(spi_no = 1, csn_pin = 5, ce_pin = 3)    # Pico on breadboard
+# RadioConfig.channel = 99
+testbox_config = RadioConfig(spi_no=0, csn_pin=5, ce_pin=12)  # My testbox
+v1_config = RadioConfig(spi_no=0, csn_pin=5, ce_pin=3)  # Pico explorer
+v2_config = RadioConfig(spi_no=1, csn_pin=5, ce_pin=3)  # Pico on breadboard
 master_config = v1_config
 slave_config = v2_config
 
 # For both messages need to alter fmt, instance variables, pack() and unpack() methods, to suit application.
 # Both messages must pack to the same length otherwise an assertion failure will occur at runtime.
 class FromMaster(msg):
-    fmt = 'iii'
+    fmt = "iii"
+
     def __init__(self):
         super().__init__(FromMaster, ToMaster)
         self.i0 = 0
@@ -33,8 +34,10 @@ class FromMaster(msg):
         self.i0, self.i1, self.i2 = ustruct.unpack(self.fmt, self.buf)
         return self
 
+
 class ToMaster(msg):
-    fmt = 'iii'
+    fmt = "iii"
+
     def __init__(self):
         super().__init__(FromMaster, ToMaster)
         self.i0 = 0

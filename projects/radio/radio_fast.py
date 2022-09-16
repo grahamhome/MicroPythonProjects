@@ -5,13 +5,24 @@
 from machine import SPI, Pin
 from time import ticks_diff, ticks_ms
 from radio.nrf24l01 import NRF24L01, POWER_3, SPEED_250K
-from radio.config import FromMaster, ToMaster  # User defined message classes and hardware config
+from radio.config import (
+    FromMaster,
+    ToMaster,
+)  # User defined message classes and hardware config
+
 
 class RadioFast(NRF24L01):
-    pipes = (b'\xf0\xf0\xf0\xf0\xe1', b'\xf0\xf0\xf0\xf0\xd2')
+    pipes = (b"\xf0\xf0\xf0\xf0\xe1", b"\xf0\xf0\xf0\xf0\xd2")
     timeout = 100
+
     def __init__(self, master, config):
-        super().__init__(SPI(config.spi_no), Pin(config.csn_pin), Pin(config.ce_pin), config.channel, FromMaster.payload_size())
+        super().__init__(
+            SPI(config.spi_no),
+            Pin(config.csn_pin),
+            Pin(config.ce_pin),
+            config.channel,
+            FromMaster.payload_size(),
+        )
         if master:
             self.open_tx_pipe(RadioFast.pipes[0])
             self.open_rx_pipe(1, RadioFast.pipes[1])
@@ -32,7 +43,7 @@ class RadioFast(NRF24L01):
     def sendbuf(self, msg_send):
         self.stop_listening()
         try:
-            self.send(msg_send.pack(), timeout = self.timeout)
+            self.send(msg_send.pack(), timeout=self.timeout)
         except OSError:  # Sometimes throws even when successful.
             self.start_listening()
             return False
@@ -49,6 +60,7 @@ class RadioFast(NRF24L01):
                 pass  # Bad message length. Try again.
         return False  # Timeout
 
+
 class Master(RadioFast):
     def __init__(self, config):
         super().__init__(True, config)
@@ -62,11 +74,12 @@ class Master(RadioFast):
         self.stop_listening()
         return None  # Timeout
 
+
 class Slave(RadioFast):
     def __init__(self, config):
         super().__init__(False, config)
 
-    def exchange(self, msg_send, block = True):
+    def exchange(self, msg_send, block=True):
         if block:  # Blocking read returns message on success,
             while not self.any():  # None on timeout
                 pass

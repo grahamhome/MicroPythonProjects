@@ -1,4 +1,5 @@
 import machine
+
 button_1 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)
 button_2 = machine.Pin(1, machine.Pin.IN, machine.Pin.PULL_UP)
 button_3 = machine.Pin(12, machine.Pin.IN, machine.Pin.PULL_DOWN)
@@ -6,6 +7,7 @@ led = machine.PWM(machine.Pin(25))
 duty = 32767
 frequency = 1
 brightness_change_mode = False
+
 
 def button_irq_handler(pin):
     global frequency
@@ -23,7 +25,8 @@ def button_irq_handler(pin):
         else:
             if duty > 3150:
                 duty -= 3150
-    
+
+
 button_1.irq(trigger=machine.Pin.IRQ_RISING, handler=button_irq_handler)
 button_2.irq(trigger=machine.Pin.IRQ_RISING, handler=button_irq_handler)
 

@@ -10,4 +10,4 @@ class RollingAverage:
         else:
             self._values.append(value)
         self._index = (self._index + 1) % self._size
-        return sum(self._values)/len(self._values)
+        return sum(self._values) / len(self._values)

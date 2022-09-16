@@ -3,7 +3,7 @@ from utime import sleep_us, ticks_us, ticks_diff
 
 _SPEED_OF_SOUND = 340  # m/s at sea level
 TX_DURATION = 10  # microseconds
-MEASUREMENT_THRESHOLD = 0.1 # centimeters
+MEASUREMENT_THRESHOLD = 0.1  # centimeters
 
 # TODO: Sensor should put out a steady reading when stationary and an accurate curve when moving (only report changes to a certain level of precision?)
 # Implement a timer that adds to rolling average?

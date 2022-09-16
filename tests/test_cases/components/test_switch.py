@@ -31,8 +31,16 @@ def test_open_callbacks_alone():
     signal_1 = Signal()
     signal_2 = Signal()
 
-    Switch(pin_number=LEFT_SWITCH_PULL_UP_PIN, open_callback=signal_1.toggle, pull_down=False)
-    Switch(pin_number=RIGHT_SWITCH_PULL_DOWN_PIN, open_callback=signal_2.toggle, pull_down=True)
+    Switch(
+        pin_number=LEFT_SWITCH_PULL_UP_PIN,
+        open_callback=signal_1.toggle,
+        pull_down=False,
+    )
+    Switch(
+        pin_number=RIGHT_SWITCH_PULL_DOWN_PIN,
+        open_callback=signal_2.toggle,
+        pull_down=True,
+    )
     print("Close and open left switch")
     while not signal_1.value:
         sleep_ms(500)
@@ -50,8 +58,16 @@ def test_close_callbacks_alone():
     signal_1 = Signal()
     signal_2 = Signal()
 
-    Switch(pin_number=LEFT_SWITCH_PULL_UP_PIN, close_callback=signal_1.toggle, pull_down=False)
-    Switch(pin_number=RIGHT_SWITCH_PULL_DOWN_PIN, close_callback=signal_2.toggle, pull_down=True)
+    Switch(
+        pin_number=LEFT_SWITCH_PULL_UP_PIN,
+        close_callback=signal_1.toggle,
+        pull_down=False,
+    )
+    Switch(
+        pin_number=RIGHT_SWITCH_PULL_DOWN_PIN,
+        close_callback=signal_2.toggle,
+        pull_down=True,
+    )
     print("Close and open left switch")
     while not signal_1.value:
         sleep_ms(500)

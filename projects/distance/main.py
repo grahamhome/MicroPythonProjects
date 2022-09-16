@@ -9,6 +9,7 @@ min_distance = 4
 max_freq = 2000
 min_freq = 100
 
+
 def main():
     sensor = UltrasonicSensor(1, 0)
     distance = sensor.distance()
@@ -22,10 +23,11 @@ def main():
     while 1:
         sleep_ms(100)
         dist = window.update_and_retrieve(sensor.distance())
-        if abs(distance-dist) > 0.2:
+        if abs(distance - dist) > 0.2:
             distance = dist
             print(dist)
-            led.update_flash_per_sec(100*(dist-min_dist)/(max_dist-min_dist))
+            led.update_flash_per_sec(100 * (dist - min_dist) / (max_dist - min_dist))
+
 
 if __name__ == "__main__":
     main()
