@@ -20,7 +20,7 @@ class Switch:
         self._pin = Pin(pin_number, mode=Pin.IN, pull=Pin.PULL_DOWN if pull_down else Pin.PULL_UP)
         self._pull_down = pull_down
         self._debounced_state = pull_down if start_active else not pull_down
-        self._counter = 0
+        self._reset_counter()
         self._close_callback = close_callback or (lambda: ...)
         self._open_callback = open_callback or (lambda: ...)
         Switch._instances.append(self)
@@ -51,8 +51,17 @@ class Switch:
                     self._open_callback()
                 self._reset_counter()
 
+    def delete(self):
+        self.__del__()
+
     def __del__(self):
         Switch._instances.remove(self)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()
 
 
 def _check_button_pins(timer):

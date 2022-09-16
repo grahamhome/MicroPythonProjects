@@ -19,6 +19,8 @@ class LED:
         self._timer = Timer(-1)
         if on:
             self.on()
+        else:
+            self.off()
 
     def _init_timer(self):
         if self._flash_per_sec > 0:

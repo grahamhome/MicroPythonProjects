@@ -144,3 +144,68 @@ def test_start_active():
     while signal_1.value:
         sleep_ms(500)
     assert not signal_1.value, "Close not detected"
+
+
+def test_switch_auto_delete():
+    wait_both_opened()
+    signal = Signal()
+
+    def create_and_delete_switch():
+        Switch(
+            pin_number=LEFT_SWITCH_PULL_UP_PIN,
+            open_callback=signal.set_true,
+            pull_down=False,
+        )
+        print("Close and open left switch")
+        while not signal.value:
+            sleep_ms(500)
+        # __del__() should be called here, but it is not.
+
+    assert not signal.value, "Signal set too soon"
+    create_and_delete_switch()
+    assert signal.value, "Signal not set"
+
+    assert len(Switch._instances) == 0, "Switch not destroyed"
+
+
+def test_switch_delete():
+    wait_both_opened()
+    signal = Signal()
+
+    def create_and_delete_switch():
+        switch = Switch(
+            pin_number=LEFT_SWITCH_PULL_UP_PIN,
+            open_callback=signal.set_true,
+            pull_down=False,
+        )
+        print("Close and open left switch")
+        while not signal.value:
+            sleep_ms(500)
+        switch.delete()
+
+    assert not signal.value, "Signal set too soon"
+    create_and_delete_switch()
+    assert signal.value, "Signal not set"
+
+    assert len(Switch._instances) == 0, "Switch not destroyed"
+
+
+def test_switch_destroyed_by_ctx_mngr():
+    wait_both_opened()
+    signal = Signal()
+
+    def create_and_delete_switch():
+        with Switch(
+            pin_number=LEFT_SWITCH_PULL_UP_PIN,
+            open_callback=signal.set_true,
+            pull_down=False,
+        ):
+            print("Close and open left switch")
+            while not signal.value:
+                sleep_ms(500)
+
+    assert not signal.value, "Signal set too soon"
+    create_and_delete_switch()
+    assert signal.value, "Signal not set"
+
+    assert len(Switch._instances) == 0, "Switch not destroyed"
