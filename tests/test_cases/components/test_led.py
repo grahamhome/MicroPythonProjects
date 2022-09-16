@@ -1,5 +1,5 @@
 from components.led import LED
-from components.button import Button
+from components.button_old import Button
 
 LED_PIN = 15
 PULL_UP_BUTTON_PIN = 16

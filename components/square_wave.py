@@ -83,9 +83,8 @@ class SquareWave:
         :param timer:
         :return:
         """
-        if self.is_running:
-            self._stop_wave()
-            self.stop_timer()
+        self._stop_wave()
+        self.stop_timer()
 
     def toggle(self):
         """

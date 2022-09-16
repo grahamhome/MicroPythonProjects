@@ -1,4 +1,4 @@
-from components.button import Button
+from components.button_old import Button
 from components.led import LED
 from components.buzzer import Buzzer
 from _thread import start_new_thread

@@ -1,4 +1,4 @@
-from components.button import Button
+from components.button_old import Button
 from components.ultrasonic_sensor import UltrasonicSensor
 from components.led import LED
 from utime import sleep_ms

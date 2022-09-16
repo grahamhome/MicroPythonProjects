@@ -16,8 +16,6 @@ class LED:
         self._timer = Timer(-1)
         if on:
             self.on()
-        else:
-            self.off()
         if flash_per_sec > 0:
             self._flash_per_sec = flash_per_sec
             self._init_timer()
@@ -32,10 +30,17 @@ class LED:
     def toggle(self, timer=None):
         """
         Change the LED from on to off or vice versa.
+        Don't affect blinking
         :param timer:
         :return:
         """
-        self._pwm.toggle()
+        if self.is_on():
+            # TODO: this is no good because we have to disable the timer when we stop, but we don't want to when we blink
+            # Solution: remove all timers & duration (except for blink timer) from LED and SquareWave
+            # now we can start and stop PWM with correct params
+            self.off()
+        else:
+            self.on()
 
     def on(self, brightness=None, flash_per_sec=0, duration_sec=0):
         """
@@ -59,6 +64,7 @@ class LED:
         Turn the LED off.
         :return:
         """
+        self._timer.deinit()
         self._pwm.stop()
 
     def is_on(self):
