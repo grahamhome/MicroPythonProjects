@@ -63,13 +63,24 @@ def test_close_callbacks_alone():
         assert signal_1.value, "Wrong switch closed or detected"
     assert signal_1.value and signal_2.value, "Wrong switch closed or detected"
 
+
 def test_close_and_open_callbacks_together():
     wait_both_opened()
     signal_1 = Signal()
     signal_2 = Signal()
 
-    Switch(pin_number=LEFT_SWITCH_PULL_UP_PIN, close_callback=signal_1.set_true, open_callback=signal_1.set_false, pull_down=False)
-    Switch(pin_number=RIGHT_SWITCH_PULL_DOWN_PIN, close_callback=signal_2.set_true, open_callback=signal_2.set_false, pull_down=True)
+    Switch(
+        pin_number=LEFT_SWITCH_PULL_UP_PIN,
+        close_callback=signal_1.set_true,
+        open_callback=signal_1.set_false,
+        pull_down=False,
+    )
+    Switch(
+        pin_number=RIGHT_SWITCH_PULL_DOWN_PIN,
+        close_callback=signal_2.set_true,
+        open_callback=signal_2.set_false,
+        pull_down=True,
+    )
     print("Close and hold left switch")
     while not signal_1.value:
         sleep_ms(500)
@@ -102,7 +113,13 @@ def test_closed_status_without_callbacks():
 def test_start_active():
     wait_left_switch_closed()
     signal_1 = Signal()
-    Switch(pin_number=LEFT_SWITCH_PULL_UP_PIN, pull_down=False, open_callback=signal_1.set_true, close_callback=signal_1.set_false, start_active=True)
+    Switch(
+        pin_number=LEFT_SWITCH_PULL_UP_PIN,
+        pull_down=False,
+        open_callback=signal_1.set_true,
+        close_callback=signal_1.set_false,
+        start_active=True,
+    )
     print("Open left switch")
     while not signal_1.value:
         sleep_ms(500)
