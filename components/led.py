@@ -7,65 +7,65 @@ class LED:
     Blinky boy.
     """
 
+    # TODO add fade_on, fade_off, pulse effects
+
     def __init__(self, pin_number, brightness=1, flash_per_sec=0, on=False):
         """
         Create an LED with the given pin number, brightness, flash rate and initial state.
         """
-        self._pwm = SquareWave(pin_number=pin_number)
+        self._pwm = SquareWave(pin_number=pin_number, frequency=100, duty=brightness, start_active=False)
         self._brightness = brightness
+        self._flash_per_sec = flash_per_sec
         self._timer = Timer(-1)
         if on:
             self.on()
-        if flash_per_sec > 0:
-            self._flash_per_sec = flash_per_sec
-            self._init_timer()
 
     def _init_timer(self):
-        self._timer.init(
-            period=round(1000 / self._flash_per_sec),
-            mode=Timer.PERIODIC,
-            callback=self.toggle,
-        )
+        if self._flash_per_sec > 0:
+            self._timer.init(
+                period=round(1000 / self._flash_per_sec),
+                mode=Timer.PERIODIC,
+                callback=self._blink,
+            )
+        else:
+            self._timer.deinit()
 
-    def toggle(self, timer=None):
+    def _blink(self, timer=None):
         """
         Change the LED from on to off or vice versa.
-        Don't affect blinking
+        """
+        if self.is_on():
+            self._pwm.stop()
+        else:
+            self._pwm.start()
+
+    def toggle(self):
+        """
+        Change the LED from on to off or vice versa.
         :param timer:
         :return:
         """
         if self.is_on():
-            # TODO: this is no good because we have to disable the timer when we stop, but we don't want to when we blink
-            # Solution: remove all timers & duration (except for blink timer) from LED and SquareWave
-            # now we can start and stop PWM with correct params
             self.off()
         else:
             self.on()
 
-    def on(self, brightness=None, flash_per_sec=0, duration_sec=0):
+    def on(self):
         """
-        Light up the LED with the given brightness, flash rate and duration.
-        :param brightness:
-        :param flash_per_sec:
-        :param duration_sec:
-        :return:
+        Light up the LED.
         """
-        if brightness is None:
-            brightness = self._brightness
-        if flash_per_sec > 0:
-            self._flash_per_sec = flash_per_sec
+        if not self.is_on():
             self._init_timer()
-        if self._pwm.is_running:
-            self._pwm.stop()
-        self._pwm.start(frequency=100, duty=brightness, duration_sec=duration_sec)
+            self._pwm.start()
 
     def off(self):
         """
         Turn the LED off.
         :return:
         """
-        self._timer.deinit()
-        self._pwm.stop()
+        if self.is_on():
+            self._timer.deinit()
+            self._pwm.stop()
 
     def is_on(self):
         """
@@ -79,12 +79,6 @@ class LED:
         """
         self._pwm.set_duty(brightness)
 
-    def update_duration(self, duration_sec):
-        """
-        Set the LED timeout to the given duration in seconds.
-        """
-        self._pwm.start_timer(duration_sec)
-
     def update_flash_per_sec(self, flash_per_sec):
         """
         Set the LED flash rate to the given number of flashes per second.
@@ -94,4 +88,6 @@ class LED:
         self._flash_per_sec = flash_per_sec
         self._init_timer()
 
-    # TODO add fade_on, fade_off, pulse effects
+    def __del__(self):
+        self._timer.deinit()
+        self._pwm.stop()

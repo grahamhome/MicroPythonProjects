@@ -6,23 +6,21 @@ class SquareWave:
     A square waveform generator.
     """
 
-    def __init__(self, pin_number):
+    def __init__(self, pin_number, frequency, duty, start_active=True):
         self._pin = Pin(pin_number, Pin.OUT)
+        self._frequency = frequency
+        self._duty = duty
         self._pwm = None
         self.is_running = False
-        self._timer = Timer(-1)
+        if start_active:
+            self.start()
 
-    def start(self, frequency, duration_sec=0, duty=0.5):
+    def start(self):
         """
-        Start the square wave signal with the given frequency, duty cycle and duration.
+        Start the square wave signal with the given frequency and duty cycle.
         """
         if not self.is_running:
-            self._frequency = frequency
-            self._duration_sec = duration_sec
-            self._duty = duty
             self._generate_wave()
-            self.stop_timer()
-            self.start_timer(duration_sec)
 
     def _generate_wave(
         self,
@@ -61,22 +59,6 @@ class SquareWave:
         self._pwm.freq(frequency)
         self._frequency = frequency
 
-    def start_timer(self, duration_sec):
-        """
-        Starts a duration timer for the given duration.
-        """
-        if duration_sec > 0:
-            self._timer.init(
-                period=duration_sec * 1000, mode=Timer.ONE_SHOT, callback=self.stop
-            )
-
-    def stop_timer(self):
-        """
-        End the duration timer without affecting the square wave.
-        :return:
-        """
-        self._timer.deinit()
-
     def stop(self, timer=None):
         """
         Disable the square wave and end the duration timer.
@@ -84,7 +66,6 @@ class SquareWave:
         :return:
         """
         self._stop_wave()
-        self.stop_timer()
 
     def toggle(self):
         """
@@ -92,6 +73,6 @@ class SquareWave:
         :return:
         """
         if self.is_running:
-            self._stop_wave()
+            self.stop()
         else:
-            self._generate_wave()
+            self.start()
