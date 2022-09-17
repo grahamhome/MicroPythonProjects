@@ -1,13 +1,12 @@
 from machine import Pin
+from time import sleep_ms
 from utime import sleep_us, ticks_us, ticks_diff
 
 _SPEED_OF_SOUND = 340  # m/s at sea level
 TX_DURATION = 10  # microseconds
 MEASUREMENT_THRESHOLD = 0.1  # centimeters
 
-# TODO: Sensor should put out a steady reading when stationary and an accurate curve when moving (only report changes to a certain level of precision?)
-# Implement a timer that adds to rolling average?
-# Or take multiple readings for each request & give average?
+
 class UltrasonicSensor:
     _conversion_rate = (
         _SPEED_OF_SOUND / 10_000 / 2
@@ -40,6 +39,5 @@ class UltrasonicSensor:
         sleep_us(TX_DURATION)
         self._tx.off()
         while not self._rx_end > self._rx_start:
-            ...
-            # todo sleep async here
+            sleep_ms(10)
         return ticks_diff(self._rx_end, self._rx_start) * self._conversion_rate
