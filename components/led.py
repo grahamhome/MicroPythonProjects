@@ -13,39 +13,27 @@ class LED:
         """
         Create an LED with the given pin number, brightness, flash rate and initial state.
         """
-        self._pwm = SquareWave(pin_number=pin_number, frequency=100, duty=brightness, start_active=False)
+        self._pwm = SquareWave(pin_number=pin_number, frequency=100, duty=brightness, start_active=on)
         self._brightness = brightness
         self._flash_per_sec = flash_per_sec
         self._timer = Timer(-1)
+        self._on_state = on
         if on:
-            self.on()
-        else:
-            self.off()
+            self._init_timer()
 
     def _init_timer(self):
         if self._flash_per_sec > 0:
             self._timer.init(
                 period=round(1000 / self._flash_per_sec),
                 mode=Timer.PERIODIC,
-                callback=self._blink,
+                callback=self._pwm.toggle,
             )
         else:
             self._timer.deinit()
 
-    def _blink(self, timer=None):
-        """
-        Change the LED from on to off or vice versa.
-        """
-        if self.is_on():
-            self._pwm.stop()
-        else:
-            self._pwm.start()
-
     def toggle(self):
         """
-        Change the LED from on to off or vice versa.
-        :param timer:
-        :return:
+        Change the LED state from enabled to disabled or vice versa.
         """
         if self.is_on():
             self.off()
@@ -54,22 +42,29 @@ class LED:
 
     def on(self):
         """
-        Light up the LED.
+        Enable the LED.
         """
-        if not self.is_on():
-            self._init_timer()
-            self._pwm.start()
+        self._init_timer()
+        self._pwm.start()
+        self._on_state = True
 
     def off(self):
         """
-        Turn the LED off.
+        Disable the LED
         :return:
         """
-        if self.is_on():
-            self._timer.deinit()
-            self._pwm.stop()
+        self._timer.deinit()
+        self._pwm.stop()
+        self._on_state = False
 
     def is_on(self):
+        """
+        True if the LED is enabled (steady or blinking mode).
+        :return:
+        """
+        return self._on_state
+
+    def is_lit(self):
         """
         True if the LED is currently lit, False otherwise.
         """
@@ -79,6 +74,7 @@ class LED:
         """
         Set the LED brightness to the given level 0-1.
         """
+        self._brightness = brightness
         self._pwm.set_duty(brightness)
 
     def update_flash_per_sec(self, flash_per_sec):
@@ -90,6 +86,14 @@ class LED:
         self._flash_per_sec = flash_per_sec
         self._init_timer()
 
+    def delete(self):
+        self.__del__()
+
     def __del__(self):
-        self._timer.deinit()
-        self._pwm.stop()
+        self.off()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()

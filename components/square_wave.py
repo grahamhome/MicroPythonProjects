@@ -10,30 +10,24 @@ class SquareWave:
         self._pin = Pin(pin_number, Pin.OUT)
         self._frequency = frequency
         self._duty = duty
-        self._pwm = None
+        self._pwm = PWM(self._pin)
         self.is_running = False
         if start_active:
             self.start()
+        else:
+            self.stop()
 
-    def start(self):
-        """
-        Start the square wave signal with the given frequency and duty cycle.
-        """
-        if not self.is_running:
-            self._generate_wave()
-
-    def _generate_wave(
+    def start(
         self,
     ):
         """
         Starts the square wave signal.
         """
-        self.is_running = True
-        self._pwm = PWM(self._pin)
         self.set_duty(self._duty)
         self.set_frequency(self._frequency)
+        self.is_running = True
 
-    def _stop_wave(self):
+    def stop(self):
         """
         Terminates the square wave signal.
         :return:
@@ -59,17 +53,9 @@ class SquareWave:
         self._pwm.freq(frequency)
         self._frequency = frequency
 
-    def stop(self, timer=None):
+    def toggle(self, timer=None):
         """
-        Disable the square wave and end the duration timer.
-        :param timer:
-        :return:
-        """
-        self._stop_wave()
-
-    def toggle(self):
-        """
-        Enable or disable the square wave without affecting the duration timer.
+        Enable or disable the square wave.
         :return:
         """
         if self.is_running:
