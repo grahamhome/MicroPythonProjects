@@ -1,4 +1,5 @@
 import tests.test_cases as test_cases
+from sys import print_exception
 
 
 def run_tests():
@@ -20,7 +21,8 @@ def run_tests():
         print(f"Failures ({num_failures}):")
         for failed_test, exception in failures.items():
             print(f"\nTest: {failed_test}")
-            print(f"Exception: {exception}")
+            print(f"Exception:")
+            print_exception(exception)
     else:
         print("All passed!")
 
