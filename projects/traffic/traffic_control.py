@@ -1,6 +1,6 @@
-from components.button_old import Button
+from components.switch import Switch
 from components.led import LED
-from components.buzzer import Buzzer
+from components.piezo import Piezo
 from _thread import start_new_thread
 from utime import sleep_ms
 from machine import Timer
@@ -162,8 +162,8 @@ class Intersection:
             moving=True,
         )
         self._pedestrians_waiting = 0
-        self._road_sensor = Button(road_sensor_pin, callback=self._car_arrives)
-        self._crosswalk_sensor = Button(crosswalk_sensor_pin, callback=self._pedestrian_arrives, pull_down=False)
+        self._road_sensor = Switch(road_sensor_pin, callback=self._car_arrives)
+        self._crosswalk_sensor = Switch(crosswalk_sensor_pin, callback=self._pedestrian_arrives, pull_down=False)
 
     def _car_arrives(self, _):
         self._cars_waiting += 1
