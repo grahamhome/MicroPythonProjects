@@ -4,8 +4,8 @@
 
 #### Overview
 The goal of this project is to find and learn to use a MicroPython library 
-for the FM radio modules I have.
-I want to be able to send and recieve arbitrary data between Pi Pico units. 
+for the NRF24L01+ FM radio modules I have.
+I want to be able to send and receive arbitrary data between Pi Pico units. 
 I plan to write a component class to simplify the use of my chosen library.
 
 #### Updates
@@ -25,4 +25,4 @@ am using to power the Pico is not stable enough for the NRF24L01+ radios, or per
 are simply of poor quality. I have purchased a new set of NRF24L01+ boards which have 
 a 3.3V regulator included in each board. I hope that the combination of the power regulator 
 and what appears to be a higher-quality board will help me to finally get my test code
-running successfully so that I may proceed to build projects with the NRF24L01. 
+running successfully so that I may proceed to build projects with the NRF24L01+. 
