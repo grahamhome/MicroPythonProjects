@@ -5,15 +5,12 @@
 
 # Modified by Graham Home 2022
 import ustruct
-from radio.msg import RadioConfig, msg
+from projects.radio.msg import RadioConfig, msg
 
 # Choose a channel (or accept default 99)
-# RadioConfig.channel = 99
-testbox_config = RadioConfig(spi_no=0, csn_pin=5, ce_pin=12)  # My testbox
-v1_config = RadioConfig(spi_no=0, csn_pin=5, ce_pin=3)  # Pico explorer
-v2_config = RadioConfig(spi_no=1, csn_pin=5, ce_pin=3)  # Pico on breadboard
-master_config = v1_config
-slave_config = v2_config
+RadioConfig.channel = 99
+master_config = RadioConfig(spi_no=0, csn_pin=14, ce_pin=17)
+slave_config = RadioConfig(spi_no=0, csn_pin=14, ce_pin=17)
 
 # For both messages need to alter fmt, instance variables, pack() and unpack() methods, to suit application.
 # Both messages must pack to the same length otherwise an assertion failure will occur at runtime.

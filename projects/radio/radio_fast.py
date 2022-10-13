@@ -4,8 +4,8 @@
 
 from machine import SPI, Pin
 from time import ticks_diff, ticks_ms
-from radio.nrf24l01 import NRF24L01, POWER_3, SPEED_250K
-from radio.config import (
+from projects.radio.nrf24l01 import NRF24L01, POWER_3, SPEED_250K
+from projects.radio.config import (
     FromMaster,
     ToMaster,
 )  # User defined message classes and hardware config
