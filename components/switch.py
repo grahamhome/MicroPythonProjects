@@ -67,6 +67,7 @@ class Switch:
 def _check_button_pins(timer):
     for button in Switch._instances:
         button._update()
+    Switch._all_instance_poller.init(mode=Timer.ONE_SHOT, period=Switch.CHECK_MS, callback=_check_button_pins)
 
 
-Switch._all_instance_poller.init(mode=Timer.PERIODIC, period=Switch.CHECK_MS, callback=_check_button_pins)
+Switch._all_instance_poller.init(mode=Timer.ONE_SHOT, period=Switch.CHECK_MS, callback=_check_button_pins)
