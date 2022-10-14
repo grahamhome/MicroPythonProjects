@@ -1,4 +1,4 @@
-from components import Multiplexer
+from components import Multiplexer, Switch, LED
 from utime import sleep_ms
 
 current_value = None
@@ -20,8 +20,13 @@ def main():
     print(multiplexer._switches)
     print(multiplexer._output_pins)
     global current_value
-    while 1:
-        if current_value:
-            print(current_value)
-            current_value = None
-            sleep_ms(500)
+    # while 1:
+    #     if current_value:
+    #         print(current_value)
+    #         current_value = None
+    #         sleep_ms(500)
+
+    with LED(pin_number=25) as work_light:
+        with Switch(pin_number=15, pull_down=False, close_callback=work_light.toggle) as switchy:
+            while 1:
+                ...
